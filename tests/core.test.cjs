@@ -42,3 +42,38 @@ test('T21 资料：空昵称不通过',()=>{const {api}=makeComm();assert.equal(
 test('T22 评论：初始评论和新留言可以合并',()=>{const {api}=makeComm();const item={id:'abc',comments:[{author:'A',content:'已有线索'}]};assert.equal(api.listComments(item).length,1);assert.ok(api.addComment('abc','张同学','我也留意过').ok);assert.equal(api.listComments(item).length,2)});
 test('T23 评论：空白留言与超长留言均拒绝',()=>{const {api}=makeComm();assert.equal(api.validateComment('   ').ok,false);assert.equal(api.validateComment('字'.repeat(221)).ok,false)});
 test('T24 数据集：26条类别多样、地点真实字符串、无网络图片依赖',()=>{const ctx={window:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../js/sample-data.js'),'utf8'),ctx);const l=ctx.window.LFDemoData;assert.equal(l.length,26);assert.ok(l.some(x=>x.location.includes('晋江楼学习中心')));assert.ok(l.some(x=>x.location.includes('丁香园食堂')));assert.ok(new Set(l.map(x=>x.category)).size>=8);assert.ok(l.every(x=>!/^http/.test(x.photo||'')))});
+
+// A 在 Issue "fix: invalid time value reports date error" 中新增的回归用例。
+test('T25 校验：非法时分 25:61 归类到 time 而非 date', () => {
+  const result = core.validateDraft(make({ time: '25:61' }), now);
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.time, '时间无效');
+  assert.equal(result.errors.date, undefined);
+});
+
+test('T26 校验：24:00 超出小时范围', () => {
+  const result = core.validateDraft(make({ time: '24:00' }), now);
+  assert.equal(result.errors.time, '时间无效');
+});
+
+test('T27 校验：12:60 超出分钟范围', () => {
+  const result = core.validateDraft(make({ time: '12:60' }), now);
+  assert.equal(result.errors.time, '时间无效');
+});
+
+test('T28 校验：00:00 为合法边界时间', () => {
+  const result = core.validateDraft(make({ time: '00:00' }), now);
+  assert.equal(result.valid, true);
+});
+
+test('T29 校验：23:59 为合法边界时间', () => {
+  const result = core.validateDraft(make({ time: '23:59' }), now);
+  assert.equal(result.valid, true);
+});
+
+test('T30 校验：日期与时间均非法时分别报告错误', () => {
+  const result = core.validateDraft(make({ date: '2026-02-30', time: '25:61' }), now);
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.date, '日期无效');
+  assert.equal(result.errors.time, '时间无效');
+});

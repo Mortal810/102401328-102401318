@@ -23,12 +23,36 @@
     const location = clean(draft.location);
     if (!location) errors.location = '请填写遗失或拾取地点';
     else if (location.length > 80) errors.location = '地点不能超过80个字符';
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(clean(draft.date))) errors.date = '请选择有效日期';
-    if (!/^\d{2}:\d{2}$/.test(clean(draft.time))) errors.time = '请选择有效时间';
-    if (!errors.date && !errors.time) {
-      const parsed = new Date(`${draft.date}T${draft.time}:00`);
-      if (Number.isNaN(parsed.getTime()) || parsed.getFullYear() !== Number(draft.date.slice(0, 4)) || parsed.getMonth() + 1 !== Number(draft.date.slice(5, 7)) || parsed.getDate() !== Number(draft.date.slice(8, 10))) {
+    const dateText = clean(draft.date);
+    const timeText = clean(draft.time);
+
+    // 校验真实日历日期，防止 2026-02-30 自动归一化为其他日期。
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
+      errors.date = '请选择有效日期';
+    } else {
+      const [year, month, day] = dateText.split('-').map(Number);
+      const parsedDay = new Date(`${dateText}T00:00:00`);
+      if (Number.isNaN(parsedDay.getTime()) ||
+          parsedDay.getFullYear() !== year ||
+          parsedDay.getMonth() + 1 !== month ||
+          parsedDay.getDate() !== day) {
         errors.date = '日期无效';
+      }
+    }
+
+    // 时间先校验格式，再明确校验小时 00-23 与分钟 00-59。
+    if (!/^\d{2}:\d{2}$/.test(timeText)) {
+      errors.time = '请选择有效时间';
+    } else {
+      const [hour, minute] = timeText.split(':').map(Number);
+      if (hour > 23 || minute > 59) errors.time = '时间无效';
+    }
+
+    // 日期和时间都合法时，再判断是否晚于当前时间。
+    if (!errors.date && !errors.time) {
+      const parsed = new Date(`${dateText}T${timeText}:00`);
+      if (Number.isNaN(parsed.getTime())) {
+        errors.time = '时间无效';
       } else if (parsed.getTime() > now.getTime()) {
         errors.date = '发生时间不能晚于当前时间';
       }
