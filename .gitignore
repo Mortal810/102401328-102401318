@@ -2,5 +2,3 @@ node_modules/
 .DS_Store
 Thumbs.db
 .vscode/
-playwright-report/
-test-results/
