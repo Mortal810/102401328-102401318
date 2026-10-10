@@ -1,3 +1,4 @@
+
 /* 数据存储适配器：Chrome file:// 使用 localStorage；受限时使用本次会话内存。 */
 window.LFStore = (function () {
   const KEY = 'fzu-campus-lostfound-v1-items';
@@ -28,3 +29,4 @@ window.LFStore = (function () {
   function isPersistent() { return persistent; }
   return { clientId, loadOwn, saveOwn, all, isPersistent };
 })();
+

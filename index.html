@@ -1,133 +1,148 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#1677ff">
-  <meta name="description" content="校园失物招领：发布寻物和招领信息，查找物品，联系发布者并更新状态。福州大学软件工程结对课程项目。">
-  <title>校园失物招领 · 让失物找到归途</title>
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/pages.css">
-  <script defer src="js/core.js"></script>
-  <script defer src="js/data.js"></script>
-  <script defer src="js/storage.js"></script>
-  <script defer src="js/search.js"></script>
-  <script defer src="js/detail.js"></script>
-  <script defer src="js/my-posts.js"></script>
-  <script defer src="js/app.js"></script>
-</head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="light" name="color-scheme"/>
+<meta content="#1677ff" name="theme-color"/>
+<meta content="福州大学校园失物招领：寻物、招领、关键词搜索、物品线索交流。" name="description"/>
+<title>拾见 · 福州大学校园失物招领</title>
+<link href="css/base.css" rel="stylesheet"/>
+<link href="css/layout.css" rel="stylesheet"/>
+<link href="css/pages.css" rel="stylesheet"/>
+<link href="css/visual-upgrade.css" rel="stylesheet"/></head>
 <body>
-  <div class="desktop-decoration" aria-hidden="true"><span>校园失物招领</span><small>LOST &amp; FOUND · FUZHOU UNIVERSITY</small></div>
-  <main id="app-shell" class="app-shell">
-    <div id="storage-warning" class="storage-warning" hidden>浏览器已限制本地存储，刷新后新发布的信息可能无法保留。建议使用最新版 Google Chrome。</div>
-
-    <!-- 01 首页：与第一次 Figma 原型的列表、Tab 和底部导航保持一致 -->
-    <section id="page-home" class="page" aria-label="首页">
-      <header class="topbar topbar-home">
-        <div class="brand-heading"><h1>校园失物招领</h1><span class="brand-dot" aria-hidden="true"></span></div>
-        <span class="header-submark">FZU <span class="small-sun" aria-hidden="true">✳</span></span>
-      </header>
-      <div class="page-content home-content">
-        <button type="button" class="search-entry" data-nav="search" aria-label="前往搜索页面">
-          <svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.2"/><path d="m15.5 15.5 4.7 4.7"/></svg>
-          <span>搜索物品，例如“耳机”</span>
-          <svg class="tiny-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-        </button>
-        <div class="tab-row" id="home-type-tabs" role="group" aria-label="信息类型">
-          <button class="pill-tab is-active" type="button" data-home-type="all">全部</button>
-          <button class="pill-tab" type="button" data-home-type="lost">寻物</button>
-          <button class="pill-tab" type="button" data-home-type="found">招领</button>
-        </div>
-        <div class="filter-box">
-          <label class="filter-select-wrap" for="home-category"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 12h10m-7 5h4"/></svg><select id="home-category" aria-label="选择物品分类"><option value="all">全部分类</option></select></label>
-          <label class="switch-label"><input type="checkbox" id="home-active-only"><span class="switch-ui" aria-hidden="true"></span><span>只看进行中</span></label>
-        </div>
-        <div class="section-label-row"><span>校园最新信息</span><span id="home-count" class="quiet-count">0 条</span></div>
-        <div id="home-list" class="item-list" aria-live="polite"></div>
-        <p class="demo-note">* 首次展示为课程演示数据，内容和联系方式仅用于界面测试。</p>
-      </div>
-      <nav class="bottom-nav" aria-label="主导航">
-        <button type="button" class="nav-item is-active" data-nav="home"><img src="assets/icons/home.svg" alt="" width="24" height="24"><span>首页</span></button>
-        <button type="button" class="nav-item" data-nav="publish"><img src="assets/icons/plus.svg" alt="" width="24" height="24"><span>发布</span></button>
-        <button type="button" class="nav-item" data-nav="my"><img src="assets/icons/user.svg" alt="" width="24" height="24"><span>我的</span></button>
-      </nav>
-    </section>
-
-    <!-- 02 搜索 -->
-    <section id="page-search" class="page" aria-label="搜索" hidden>
-      <header class="topbar back-topbar"><button type="button" class="back-btn" data-back aria-label="返回首页"><span aria-hidden="true">‹</span></button><h2>搜索</h2></header>
-      <div class="page-content">
-        <form id="search-form" class="search-form" novalidate>
-          <label for="search-keyword" class="sr-only">物品名称、地点或描述关键词</label>
-          <input id="search-keyword" class="input search-input" type="search" placeholder="搜索物品，例如“耳机”" maxlength="60" autocomplete="off">
-          <button type="submit" class="primary-btn search-submit">搜索</button>
-        </form>
-        <div class="keyword-block"><h3>常用关键词</h3><div class="keyword-row"><button class="keyword-chip" type="button" data-hot="校园卡">校园卡</button><button class="keyword-chip" type="button" data-hot="雨伞">雨伞</button><button class="keyword-chip" type="button" data-hot="耳机">耳机</button><button class="keyword-chip" type="button" data-hot="水杯">水杯</button><button class="keyword-chip" type="button" data-hot="书籍">书籍</button></div></div>
-        <div class="search-help"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.5"/></svg><span>支持按物品名称、类别、地点及描述搜索</span></div>
-        <div class="search-suggestion"><div class="illustration-token">⌕</div><p class="subtle-title">找不到东西？试试搜索看看</p><p class="muted small">也可以回到首页查看最新发布的信息</p></div>
-      </div>
-    </section>
-
-    <!-- 03 搜索结果 -->
-    <section id="page-results" class="page" aria-label="搜索结果" hidden>
-      <header class="topbar back-topbar"><button type="button" class="back-btn" data-back aria-label="返回搜索"><span aria-hidden="true">‹</span></button><h2>搜索结果</h2></header>
-      <div class="page-content">
-        <button type="button" id="results-search-entry" class="search-entry results-search-entry" data-nav="search"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.2"/><path d="m15.5 15.5 4.7 4.7"/></svg><span id="results-keyword">耳机</span><span class="edit-search-label">修改</span></button>
-        <p id="results-count" class="results-count"></p>
-        <div class="filter-box result-filters"><label class="filter-select-wrap" for="results-category"><select id="results-category" aria-label="结果物品分类"><option value="all">全部分类</option></select></label><label class="switch-label"><input type="checkbox" id="results-active-only"><span class="switch-ui" aria-hidden="true"></span><span>只看进行中</span></label></div>
-        <div id="results-list" class="item-list" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <!-- 04 信息详情 -->
-    <section id="page-detail" class="page" aria-label="信息详情" hidden>
-      <header class="topbar back-topbar"><button type="button" class="back-btn" data-back aria-label="返回上一页"><span aria-hidden="true">‹</span></button><h2>信息详情</h2></header>
-      <div class="page-content detail-content">
-        <div id="detail-root"></div>
-        <button class="primary-btn full-btn bottom-action" type="button" data-nav="home">返回首页</button>
-      </div>
-    </section>
-
-    <!-- 05 发布信息 -->
-    <section id="page-publish" class="page" aria-label="发布信息" hidden>
-      <header class="topbar"><h2>发布信息</h2><span class="topbar-hint">分享线索，帮助归还</span></header>
-      <div class="page-content publish-content">
-        <form id="publish-form" class="publish-form" novalidate>
-          <fieldset class="publish-type-field"><legend>信息类型 <span class="required-mark">*</span></legend><div class="type-picker"><label class="type-option is-selected"><input type="radio" name="type" value="lost" checked><span class="type-option-symbol lost-symbol">⌕</span><span>寻物</span></label><label class="type-option"><input type="radio" name="type" value="found"><span class="type-option-symbol found-symbol">✦</span><span>招领</span></label></div><p class="field-help" id="type-help">寻找丢失的物品</p><p class="error-msg" data-error="type"></p></fieldset>
-          <div class="field"><label for="publish-name">物品名称 <span class="required-mark">*</span></label><input class="input" id="publish-name" name="name" maxlength="40" placeholder="例如：黑色折叠伞" required><p class="error-msg" data-error="name"></p></div>
-          <div class="field"><label for="publish-category">物品类别 <span class="required-mark">*</span></label><select class="input" id="publish-category" name="category" required><option value="">请选择物品类别</option></select><p class="error-msg" data-error="category"></p></div>
-          <div class="field"><label for="publish-location" id="publish-location-label">遗失地点 <span class="required-mark">*</span></label><input class="input" id="publish-location" name="location" maxlength="80" placeholder="例如：东三教学楼" required><p class="error-msg" data-error="location"></p></div>
-          <div class="field-grid"><div class="field"><label for="publish-date">日期 <span class="required-mark">*</span></label><input class="input" id="publish-date" name="date" type="date" required><p class="error-msg" data-error="date"></p></div><div class="field"><label for="publish-time">时间 <span class="required-mark">*</span></label><input class="input" id="publish-time" name="time" type="time" required><p class="error-msg" data-error="time"></p></div></div>
-          <div class="field"><label for="publish-description">物品描述 <span class="optional-mark">选填</span></label><textarea class="input textarea" id="publish-description" name="description" maxlength="500" rows="3" placeholder="可以描述颜色、外观、特征等，避免公开敏感信息"></textarea><p class="error-msg" data-error="description"></p></div>
-          <div class="field"><label for="publish-contact">联系方式 <span class="required-mark">*</span></label><input class="input" id="publish-contact" name="contact" maxlength="100" placeholder="例如：QQ 12345678 / 微信号 / 手机号" required><p class="field-help">联系方式会在详情页公开展示，请勿填写密码等敏感信息</p><p class="error-msg" data-error="contact"></p></div>
-          <div class="field"><label for="publish-photo">物品照片 <span class="optional-mark">选填</span></label><label class="upload-box" for="publish-photo"><input id="publish-photo" name="photo" type="file" accept="image/png,image/jpeg,image/webp"><span id="photo-preview" class="upload-preview"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="9" r="2"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg></span><span class="upload-label"><strong>点击上传照片</strong><small>JPG / PNG / WebP，建议不超过 3MB，自动压缩保存</small></span></label><button class="link-btn remove-photo" id="remove-photo" type="button" hidden>移除照片</button><p class="error-msg" data-error="photo"></p></div>
-          <div class="publish-tip"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.5"/></svg>发布后可在“我的发布”中标记已找到或已归还。</div>
-          <button id="publish-submit" class="primary-btn full-btn publish-submit" type="submit">确认发布 <span aria-hidden="true">→</span></button>
-        </form>
-      </div>
-      <nav class="bottom-nav" aria-label="主导航"><button type="button" class="nav-item" data-nav="home"><img src="assets/icons/home.svg" alt="" width="24" height="24"><span>首页</span></button><button type="button" class="nav-item is-active" data-nav="publish"><img src="assets/icons/plus.svg" alt="" width="24" height="24"><span>发布</span></button><button type="button" class="nav-item" data-nav="my"><img src="assets/icons/user.svg" alt="" width="24" height="24"><span>我的</span></button></nav>
-    </section>
-
-    <!-- 06 发布成功 -->
-    <section id="page-success" class="page" aria-label="发布成功" hidden><header class="topbar centered-title"><h2>发布成功</h2></header><div class="page-content success-content"><div class="success-card"><div class="success-icon">✓</div><h2>发布成功</h2><p>信息已经发布，其他同学可以查看。</p></div><button class="primary-btn full-btn" type="button" data-nav="home">返回首页</button><button class="outline-btn full-btn" type="button" data-nav="my">查看我的发布</button></div></section>
-
-    <!-- 07 我的发布：保留 Figma 头像/统计/卡片布局，删除未实现的收藏、聊天等无关入口 -->
-    <section id="page-my" class="page" aria-label="我的发布" hidden>
-      <header class="topbar"><h2>我的</h2><span class="topbar-hint">记录每一次小小的善意</span></header>
-      <div class="page-content my-content">
-        <div class="profile-card"><div class="avatar">同</div><div><h3>我的发布</h3><p>福州大学 · 校园互助</p></div><span class="local-tag">本机用户</span></div>
-        <div class="stats-card"><div><strong id="stat-total">0</strong><span>我的发布</span></div><div><strong id="stat-found">0</strong><span>已找到</span></div><div><strong id="stat-returned">0</strong><span>已归还</span></div></div>
-        <div class="my-title-row"><h3>我的发布</h3><button type="button" class="text-add" data-nav="publish">＋ 发布新信息</button></div>
-        <div id="my-list" class="my-list" aria-live="polite"></div>
-        <div class="my-info-note"><svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.5"/></svg><p>无需注册。“我的发布”只显示当前浏览器发布的信息，不能跨设备同步。课程演示数据不在这里显示。</p></div>
-      </div>
-      <nav class="bottom-nav" aria-label="主导航"><button type="button" class="nav-item" data-nav="home"><img src="assets/icons/home.svg" alt="" width="24" height="24"><span>首页</span></button><button type="button" class="nav-item" data-nav="publish"><img src="assets/icons/plus.svg" alt="" width="24" height="24"><span>发布</span></button><button type="button" class="nav-item is-active" data-nav="my"><img src="assets/icons/user.svg" alt="" width="24" height="24"><span>我的</span></button></nav>
-    </section>
-
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <div id="confirm-overlay" class="modal-backdrop" hidden><div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-heading"><div class="confirm-icon">✓</div><h3 id="confirm-heading">确认更新状态？</h3><p id="confirm-description">更新后这条信息仍会保留在列表中。</p><div class="confirm-actions"><button type="button" class="outline-btn" id="confirm-cancel">取消</button><button type="button" class="primary-btn" id="confirm-accept">确认更新</button></div></div></div>
-  </main>
+<div aria-hidden="true" class="desktop-decoration"><span>校园失物招领</span><small>LOST &amp; FOUND · FUZHOU UNIVERSITY</small></div>
+<main class="app-shell" id="app-shell">
+<div class="storage-warning" hidden="" id="storage-warning">浏览器已限制本地存储，刷新后新发布的信息可能无法保留。建议使用最新版 Google Chrome。</div>
+<!-- 01 首页：与第一次 Figma 原型的列表、Tab 和底部导航保持一致 -->
+<section aria-label="首页" class="page" id="page-home">
+<header class="topbar topbar-home">
+<div class="brand-heading"><h1>校园失物招领</h1><span aria-hidden="true" class="brand-dot"></span></div>
+<span class="header-submark">FZU <span aria-hidden="true" class="small-sun">✳</span></span>
+</header>
+<div class="page-content home-content">
+<div aria-label="校园互助" class="hero-band">
+<div class="hero-copy"><div class="hero-overline"><span class="hero-spark">✦</span> 福州大学 · 校园寻物互助</div>
+<h2>每件遗失的小事，<br/><em>都值得认真寻找。</em></h2>
+<p>在熟悉的校园里，让线索更快相遇。</p>
+<button class="hero-cta" data-nav="publish" type="button">发布一条信息 <span aria-hidden="true">↗</span></button></div>
+<div aria-hidden="true" class="hero-art"><span class="hero-halo"></span><span class="hero-bubble bubble-1">✧</span><span class="hero-bubble bubble-2">+</span><span class="hero-backpack"><i class="bag-handle"></i><i class="bag-body"><b></b></i></span><span class="hero-pin">⌁</span></div>
+</div>
+<div class="quick-access"><span class="quick-title">快捷发现</span><div class="quick-categories">
+<button data-quick-category="校园卡" type="button"><span class="quick-icon">▣</span>校园卡</button>
+<button data-quick-category="电子产品" type="button"><span class="quick-icon">♫</span>电子产品</button>
+<button data-quick-category="雨伞" type="button"><span class="quick-icon">☂</span>雨伞</button>
+<button data-quick-category="钥匙" type="button"><span class="quick-icon">⚿</span>钥匙</button>
+</div></div>
+<button aria-label="前往搜索页面" class="search-entry" data-nav="search" type="button">
+<svg aria-hidden="true" class="line-icon" viewbox="0 0 24 24"><circle cx="10.7" cy="10.7" r="6.2"></circle><path d="m15.5 15.5 4.7 4.7"></path></svg>
+<span>搜索物品，例如“耳机”</span>
+<svg aria-hidden="true" class="tiny-chevron" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6"></path></svg>
+</button>
+<div aria-label="信息类型" class="tab-row" id="home-type-tabs" role="group">
+<button class="pill-tab is-active" data-home-type="all" type="button">全部</button>
+<button class="pill-tab" data-home-type="lost" type="button">寻物</button>
+<button class="pill-tab" data-home-type="found" type="button">招领</button>
+</div>
+<div class="filter-box">
+<label class="filter-select-wrap" for="home-category"><svg aria-hidden="true" class="line-icon" viewbox="0 0 24 24"><path d="M4 7h16M7 12h10m-7 5h4"></path></svg><select aria-label="选择物品分类" id="home-category"><option value="all">全部分类</option></select></label>
+<label class="switch-label"><input id="home-active-only" type="checkbox"/><span aria-hidden="true" class="switch-ui"></span><span>只看进行中</span></label>
+</div>
+<div class="section-label-row"><span>校园最新信息</span><span class="quiet-count" id="home-count">0 条</span></div>
+<div aria-live="polite" class="item-list" id="home-list"></div>
+</div>
+<nav aria-label="主导航" class="bottom-nav">
+<button class="nav-item is-active" data-nav="home" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m3%2010%209-7%209%207v10a1%201%200%200%201-1%201h-5v-7H9v7H4a1%201%200%200%201-1-1V10Z%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>首页</span></button>
+<button class="nav-item" data-nav="publish" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M12%207v10M7%2012h10%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>发布</span></button>
+<button class="nav-item" data-nav="my" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4.5%2020v-1a7.5%207.5%200%200%201%2015%200v1%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>我的</span></button>
+</nav>
+</section>
+<!-- 02 搜索 -->
+<section aria-label="搜索" class="page" hidden="" id="page-search">
+<header class="topbar back-topbar"><button aria-label="返回首页" class="back-btn" data-back="" type="button"><span aria-hidden="true">‹</span></button><h2>搜索</h2></header>
+<div class="page-content">
+<form class="search-form" id="search-form" novalidate="">
+<label class="sr-only" for="search-keyword">物品名称、地点或描述关键词</label>
+<input autocomplete="off" class="input search-input" id="search-keyword" maxlength="60" placeholder="搜索物品，例如“耳机”" type="search"/>
+<button class="primary-btn search-submit" type="submit">搜索</button>
+</form>
+<div class="keyword-block"><h3>常用关键词</h3><div class="keyword-row"><button class="keyword-chip" data-hot="校园卡" type="button">校园卡</button><button class="keyword-chip" data-hot="雨伞" type="button">雨伞</button><button class="keyword-chip" data-hot="耳机" type="button">耳机</button><button class="keyword-chip" data-hot="水杯" type="button">水杯</button><button class="keyword-chip" data-hot="书籍" type="button">书籍</button><button class="keyword-chip" data-hot="钥匙" type="button">钥匙</button><button class="keyword-chip" data-hot="充电宝" type="button">充电宝</button><button class="keyword-chip" data-hot="U盘" type="button">U盘</button><button class="keyword-chip" data-hot="饭卡" type="button">饭卡</button></div></div>
+<div class="search-help"><svg aria-hidden="true" class="line-icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5m0-8v.5"></path></svg><span>支持按物品名称、类别、地点及描述搜索</span></div>
+<div class="search-suggestion"><div class="illustration-token">⌕</div><p class="subtle-title">找不到东西？试试搜索看看</p><p class="muted small">也可以回到首页查看最新发布的信息</p></div>
+</div>
+</section>
+<!-- 03 搜索结果 -->
+<section aria-label="搜索结果" class="page" hidden="" id="page-results">
+<header class="topbar back-topbar"><button aria-label="返回搜索" class="back-btn" data-back="" type="button"><span aria-hidden="true">‹</span></button><h2>搜索结果</h2></header>
+<div class="page-content">
+<button class="search-entry results-search-entry" data-nav="search" id="results-search-entry" type="button"><svg aria-hidden="true" class="line-icon" viewbox="0 0 24 24"><circle cx="10.7" cy="10.7" r="6.2"></circle><path d="m15.5 15.5 4.7 4.7"></path></svg><span id="results-keyword">耳机</span><span class="edit-search-label">修改</span></button>
+<p class="results-count" id="results-count"></p>
+<div class="filter-box result-filters"><label class="filter-select-wrap" for="results-category"><select aria-label="结果物品分类" id="results-category"><option value="all">全部分类</option></select></label><label class="switch-label"><input id="results-active-only" type="checkbox"/><span aria-hidden="true" class="switch-ui"></span><span>只看进行中</span></label></div>
+<div aria-live="polite" class="item-list" id="results-list"></div>
+</div>
+</section>
+<!-- 04 信息详情 -->
+<section aria-label="信息详情" class="page" hidden="" id="page-detail">
+<header class="topbar back-topbar"><button aria-label="返回上一页" class="back-btn" data-back="" type="button"><span aria-hidden="true">‹</span></button><h2>信息详情</h2></header>
+<div class="page-content detail-content">
+<div id="detail-root"></div>
+<button class="primary-btn full-btn bottom-action" data-nav="home" type="button">返回首页</button>
+</div>
+</section>
+<!-- 05 发布信息 -->
+<section aria-label="发布信息" class="page" hidden="" id="page-publish">
+<header class="topbar"><h2>发布信息</h2><span class="topbar-hint">分享线索，帮助归还</span></header>
+<div class="page-content publish-content">
+<form class="publish-form" id="publish-form" novalidate="">
+<fieldset class="publish-type-field"><legend>信息类型 <span class="required-mark">*</span></legend><div class="type-picker"><label class="type-option is-selected"><input checked="" name="type" type="radio" value="lost"/><span class="type-option-symbol lost-symbol">⌕</span><span>寻物</span></label><label class="type-option"><input name="type" type="radio" value="found"/><span class="type-option-symbol found-symbol">✦</span><span>招领</span></label></div><p class="field-help" id="type-help">寻找丢失的物品</p><p class="error-msg" data-error="type"></p></fieldset>
+<div class="field"><label for="publish-name">物品名称 <span class="required-mark">*</span></label><input class="input" id="publish-name" maxlength="40" name="name" placeholder="例如：黑色折叠伞" required=""/><p class="error-msg" data-error="name"></p></div>
+<div class="field"><label for="publish-category">物品类别 <span class="required-mark">*</span></label><select class="input" id="publish-category" name="category" required=""><option value="">请选择物品类别</option></select><p class="error-msg" data-error="category"></p></div>
+<div class="field"><label for="publish-location" id="publish-location-label">遗失地点 <span class="required-mark">*</span></label><input class="input" id="publish-location" maxlength="80" name="location" placeholder="例如：东三教学楼" required=""/><p class="error-msg" data-error="location"></p></div>
+<div class="field-grid"><div class="field"><label for="publish-date">日期 <span class="required-mark">*</span></label><input class="input" id="publish-date" name="date" required="" type="date"/><p class="error-msg" data-error="date"></p></div><div class="field"><label for="publish-time">时间 <span class="required-mark">*</span></label><input class="input" id="publish-time" name="time" required="" type="time"/><p class="error-msg" data-error="time"></p></div></div>
+<div class="field"><label for="publish-description">物品描述 <span class="optional-mark">选填</span></label><textarea class="input textarea" id="publish-description" maxlength="500" name="description" placeholder="可以描述颜色、外观、特征等，避免公开敏感信息" rows="3"></textarea><p class="error-msg" data-error="description"></p></div>
+<div class="field"><label for="publish-contact">联系方式 <span class="required-mark">*</span></label><input class="input" id="publish-contact" maxlength="100" name="contact" placeholder="例如：QQ 12345678 / 微信号 / 手机号" required=""/><p class="field-help">联系方式会在详情页公开展示，请勿填写密码等敏感信息</p><p class="error-msg" data-error="contact"></p></div>
+<div class="field"><label for="publish-photo">物品照片 <span class="optional-mark">选填</span></label><label class="upload-box" for="publish-photo"><input accept="image/png,image/jpeg,image/webp" id="publish-photo" name="photo" type="file"/><span class="upload-preview" id="photo-preview"><svg aria-hidden="true" class="line-icon" viewbox="0 0 24 24"><rect height="18" rx="3" width="18" x="3" y="3"></rect><circle cx="8" cy="9" r="2"></circle><path d="m4 18 5-5 4 4 3-3 4 4"></path></svg></span><span class="upload-label"><strong>点击上传照片</strong><small>JPG / PNG / WebP，建议不超过 3MB，自动压缩保存</small></span></label><button class="link-btn remove-photo" hidden="" id="remove-photo" type="button">移除照片</button><p class="error-msg" data-error="photo"></p></div>
+<div class="publish-tip"><svg aria-hidden="true" class="line-icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5m0-8v.5"></path></svg>发布后可在“我的发布”中标记已找到或已归还。</div>
+<button class="primary-btn full-btn publish-submit" id="publish-submit" type="submit">确认发布 <span aria-hidden="true">→</span></button>
+</form>
+</div>
+<nav aria-label="主导航" class="bottom-nav"><button class="nav-item" data-nav="home" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m3%2010%209-7%209%207v10a1%201%200%200%201-1%201h-5v-7H9v7H4a1%201%200%200%201-1-1V10Z%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>首页</span></button><button class="nav-item is-active" data-nav="publish" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M12%207v10M7%2012h10%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>发布</span></button><button class="nav-item" data-nav="my" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4.5%2020v-1a7.5%207.5%200%200%201%2015%200v1%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>我的</span></button></nav>
+</section>
+<!-- 06 发布成功 -->
+<section aria-label="发布成功" class="page" hidden="" id="page-success"><header class="topbar centered-title"><h2>发布成功</h2></header><div class="page-content success-content"><div class="success-card"><div class="success-icon">✓</div><h2>发布成功</h2><p>信息已经发布，其他同学可以查看。</p></div><button class="primary-btn full-btn" data-nav="home" type="button">返回首页</button><button class="outline-btn full-btn" data-nav="my" type="button">查看我的发布</button></div></section>
+<!-- 07 我的发布：保留 Figma 头像/统计/卡片布局，删除未实现的收藏、聊天等无关入口 -->
+<section aria-label="我的发布" class="page" hidden="" id="page-my">
+<header class="topbar"><h2>我的</h2><span class="topbar-hint">记录每一次小小的善意</span></header>
+<div class="page-content my-content">
+<div class="profile-card"><div class="profile-main">
+<div class="avatar" id="profile-avatar">福</div>
+<div class="profile-info"><div class="profile-name-line"><h3 id="profile-name">福大小友</h3><span class="verified-chip"><svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="m6 12 4 4 8-8"></path></svg>校园互助</span></div><p id="profile-college">福州大学 · 计算机与大数据学院</p><p class="profile-signature" id="profile-bio">有失物，也有拾回的小确幸。</p></div>
+</div><button aria-label="编辑个人资料" class="profile-edit-btn" id="edit-profile" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24"><path d="m15 5 4 4-11 11H4v-4L15 5Zm-2 2 4 4"></path></svg></button></div><div class="profile-subline"><span>✦ 寻回每份期待</span><span>☼ 分享一份善意</span></div>
+<div class="stats-card"><div><strong id="stat-total">0</strong><span>我的发布</span></div><div><strong id="stat-found">0</strong><span>已找到</span></div><div><strong id="stat-returned">0</strong><span>已归还</span></div></div>
+<div class="my-title-row"><h3>我的发布</h3><button class="text-add" data-nav="publish" type="button">＋ 发布新信息</button></div>
+<div aria-live="polite" class="my-list" id="my-list"></div>
+</div>
+<nav aria-label="主导航" class="bottom-nav"><button class="nav-item" data-nav="home" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m3%2010%209-7%209%207v10a1%201%200%200%201-1%201h-5v-7H9v7H4a1%201%200%200%201-1-1V10Z%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>首页</span></button><button class="nav-item" data-nav="publish" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M12%207v10M7%2012h10%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>发布</span></button><button class="nav-item is-active" data-nav="my" type="button"><img alt="" height="24" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4.5%2020v-1a7.5%207.5%200%200%201%2015%200v1%22%2F%3E%3C%2Fsvg%3E%0A" width="24"/><span>我的</span></button></nav>
+</section>
+<div class="modal-backdrop" hidden="" id="profile-overlay">
+<div aria-labelledby="profile-title" aria-modal="true" class="profile-dialog" role="dialog">
+<div class="profile-dialog-head"><div><span class="eyebrow">PERSONAL PROFILE</span><h3 id="profile-title">编辑个人资料</h3></div><button aria-label="关闭" class="close-round" id="profile-close" type="button">×</button></div>
+<form id="profile-form"><label>昵称<input class="input" id="profile-input-name" maxlength="18" name="nickname" placeholder="请输入昵称" required=""/></label>
+<label>学院 / 身份<input class="input" id="profile-input-college" maxlength="35" name="college" placeholder="例如：计算机与大数据学院" required=""/></label>
+<label>个人签名<textarea class="input" id="profile-input-bio" maxlength="70" name="bio" placeholder="一句简单的自我介绍" rows="3"></textarea></label>
+<button class="primary-btn full-btn" type="submit">保存个人资料</button></form>
+</div></div><div aria-live="polite" class="toast" id="toast" role="status"></div>
+<div class="modal-backdrop" hidden="" id="confirm-overlay"><div aria-labelledby="confirm-heading" aria-modal="true" class="confirm-dialog" role="dialog"><div class="confirm-icon">✓</div><h3 id="confirm-heading">确认更新状态？</h3><p id="confirm-description">更新后这条信息仍会保留在列表中。</p><div class="confirm-actions"><button class="outline-btn" id="confirm-cancel" type="button">取消</button><button class="primary-btn" id="confirm-accept" type="button">确认更新</button></div></div></div>
+</main>
+<!-- 全部功能脚本内嵌，此文件可单独离线运行。 -->
+<script src="js/core.js"></script>
+<script src="js/community.js"></script><script src="js/illustrations.js"></script><script src="js/sample-data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/search.js"></script>
+<script src="js/detail.js"></script>
+<script src="js/my-posts.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

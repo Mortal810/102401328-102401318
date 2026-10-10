@@ -1,3 +1,4 @@
+
 /** 可单独测试的业务逻辑：不依赖 DOM、网络或浏览器存储。 */
 (function (root, factory) {
   const api = factory();
@@ -6,7 +7,7 @@
 })(typeof window !== 'undefined' ? window : null, function () {
   'use strict';
 
-  const CATEGORIES = Object.freeze(['校园卡', '钥匙', '电子产品', '雨伞', '水杯', '书籍', '证件', '衣物', '其他']);
+  const CATEGORIES = Object.freeze(['校园卡', '钥匙', '电子产品', '雨伞', '水杯', '书籍', '证件', '衣物', '运动用品', '其他']);
   const TYPE_LABEL = Object.freeze({ lost: '寻物', found: '招领' });
   const STATUS_LABEL = Object.freeze({ lost: { active: '寻找中', finished: '已找到' }, found: { active: '待认领', finished: '已归还' } });
   const clean = value => String(value == null ? '' : value).trim();
@@ -51,6 +52,7 @@
         type: clean(draft.type), name: clean(draft.name), category: clean(draft.category),
         location: clean(draft.location), date: clean(draft.date), time: clean(draft.time),
         description: clean(draft.description), contact: clean(draft.contact),
+        publisher: clean(draft.publisher) || '', publisherDept: clean(draft.publisherDept) || '',
         photo: clean(draft.photo), status: 'active', createdAt: now.getTime(), isDemo: false
       }
     };
@@ -59,7 +61,7 @@
   function searchItems(items, keyword) {
     const q = clean(keyword).toLocaleLowerCase();
     if (!q) return [...items];
-    return items.filter(item => [item.name, item.category, item.location, item.description]
+    return items.filter(item => [item.name, item.category, item.location, item.description, item.publisher]
       .some(value => clean(value).toLocaleLowerCase().includes(q)));
   }
 
@@ -92,3 +94,4 @@
   function statusLabel(item) { return (STATUS_LABEL[item.type] || {})[item.status] || '未知状态'; }
   return { CATEGORIES, TYPE_LABEL, STATUS_LABEL, clean, validateDraft, createItem, searchItems, filterItems, sortItems, getMyItems, finishItem, escapeHTML, statusLabel };
 });
+

@@ -1,8 +1,12 @@
 {
-  "name": "fzu-campus-lost-and-found",
-  "version": "1.0.0",
+  "name": "fzu-campus-lost-found",
+  "version": "2.0.0",
   "private": true,
-  "description": "福州大学软件工程第二次结对作业：可离线运行的校园失物招领 Web",
-  "scripts": { "test": "node --test tests/*.test.js" },
-  "engines": { "node": ">=20" }
+  "description": "校园失物招领离线 Web：双击 index.html 即可运行",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
